@@ -14,7 +14,7 @@ from sklearn.metrics import classification_report
 
 warnings.filterwarnings('ignore')
 
-df = pd.read_csv('C:/Users/Regina/Desktop/Progetto IX/dataset/Heart_Disease_Prediction.csv')
+df = pd.read_csv('../Progetto IX/dataset/Heart_Disease_Prediction.csv')
 sns.countplot(x='Heart Disease', data=df)
 group_names = ['Absence', 'Presence']
 

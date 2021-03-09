@@ -1,18 +1,19 @@
-import classifier as classifier
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.preprocessing import StandardScaler
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
 import warnings
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 import classifiers
 import metrics
+
 warnings.filterwarnings('ignore')
 
+df = pd.read_csv('../Dataset/Heart_Disease_Prediction.csv')
 
-df = pd.read_csv('C:/Users/Regina/Desktop/Progetto IX/dataset/Heart_Disease_Prediction.csv')
+#df = pd.read_csv('C:/Users/Alessandro/Documents/GitHub/Ingegneria_della_Conoscenza_2021/Dataset/Heart_Disease_Prediction.csv')
 sns.countplot(x='Heart Disease', data=df)
 group_names=['Absence', 'Presence']
 

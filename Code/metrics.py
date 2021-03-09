@@ -10,7 +10,7 @@ def validation(test, prediction):
     print("\n\n")
 
 
-def confusionMatrix(test, prediction, name):
+def confusionMatrix(test, prediction, classes_name,name):
     # Plot non-normalized confusion matrix
     matrix = metrics.confusion_matrix(test, prediction)
     plt.figure(figsize=(6, 4))
@@ -18,7 +18,8 @@ def confusionMatrix(test, prediction, name):
                 cmap='coolwarm',
                 linecolor='white',
                 linewidths=1,
-               
+                xticklabels=classes_name,
+                yticklabels=classes_name,
                 annot=True,
                 fmt='d')
     plt.title(name)

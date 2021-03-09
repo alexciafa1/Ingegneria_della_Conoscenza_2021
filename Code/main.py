@@ -9,12 +9,12 @@ from sklearn.model_selection import train_test_split
 import warnings
 import classifiers
 import metrics
-import dataFunctions
+#import dataFunctions
 from sklearn.metrics import classification_report
 
 warnings.filterwarnings('ignore')
 
-df = pd.read_csv('../Progetto IX/dataset/Heart_Disease_Prediction.csv')
+df = pd.read_csv('../Dataset/Heart_Disease_Prediction.csv')
 sns.countplot(x='Heart Disease', data=df)
 group_names = ['Absence', 'Presence']
 

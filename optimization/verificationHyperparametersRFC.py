@@ -4,15 +4,21 @@ import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import validation_curve
 from sklearn.model_selection import GridSearchCV
-import dataFunctions
+#import dataFunctions
+#import sys
+#sys.path.insert(0, 'C:/Users/Alessandro/Documents/GitHub/Ingegneria_della_Conoscenza_2021/Code')
+
+#import dataFunctions
+
+#DA AGGIUSTARE ##################################
 import statistics
 
 
-data = pd.read_csv("C:/Users/Regina/Desktop/Progetto IX/dataset/Heart_Disease_Prediction.csv")
+data = pd.read_csv("../Dataset/Heart_Disease_Prediction.csv")
 datas = data.drop('Age', 1)
 X = np.array(datas.drop('Heart Disease', 1))
 y = np.array(data['Heart Disease'])
-X_train, X_test, Y_train, Y_test, n_class = dataFunctions.getData('C:/Users/Regina/Desktop/Progetto IX/dataset/Heart_Disease_Prediction.csv')
+X_train, X_test, Y_train, Y_test, n_class = dataFunctions.getData('../Dataset/Heart_Disease_Prediction.csv')
 
 
 data.hist(bins=50, figsize=(25, 20))

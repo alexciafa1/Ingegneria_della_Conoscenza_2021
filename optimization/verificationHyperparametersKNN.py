@@ -5,7 +5,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import validation_curve
 from sklearn.model_selection import GridSearchCV
 
-data = pd.read_csv('C:/Users/Regina/Desktop/Progetto IX/dataset/Heart_Disease_Prediction.csv')
+data = pd.read_csv('../Dataset/Heart_Disease_Prediction.csv')
 datas = data.drop('Age', 1)
 X = np.array(datas.drop('Heart Disease', 1))
 y = np.array(data['Heart Disease'])

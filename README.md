@@ -2,9 +2,9 @@
 Repository per esame di Ingegneria della Conoscenza Anno 2021 - Università degli Studi di Bari 
 
 # Descrizione
-Cryptocurrency
 
-Dataset: https://www.kaggle.com/sudalairajkumar/cryptocurrencypricehistory?select=coin_Bitcoin.csv
+
+Dataset:
 
 # Progetto a cura di:
 

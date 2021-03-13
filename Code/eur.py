@@ -2,10 +2,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import xarray as xarray
 from sklearn.cluster import KMeans
 import seaborn as sns
+import classifiers
+from sklearn.model_selection import train_test_split
+import metrics
+dataset = pd.read_csv('../Dataset/insurance.csv')
 
-dataset = pd.read_csv('C:/Users/forzi/Desktop/prova progetto/Dataset/insurance.csv')
 
 # dataset = dataset.fillna(0)
 # print(dataset)
@@ -45,13 +49,20 @@ print(kmeans)
 sns.scatterplot(data=dataset, x='age', y='charges', hue='bmi')
 #sns.scatterplot(data=dataset, x='smoker', y='charges', hue='cluster')
 
+print(dataset.values)
+x_data=dataset[dataset.columns[0:5]].to_numpy()
+y_data=np.array(dataset["cluster"])
 
-
+x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.2, shuffle='true', stratify=y_data)
 
 #naive classificator
 
+classifier1 = classifiers.BayesianClassifier(x_train, y_train)
+prediction = classifier1.predict(x_test)
+print(classifier1)
+metrics.validation(y_test, prediction)
 
-
+metrics.confusionMatrix(y_test, prediction, name="confusion metrix KNN")
 
 
 

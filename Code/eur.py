@@ -2,12 +2,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-import xarray as xarray
 from sklearn.cluster import KMeans
 import seaborn as sns
-import classifiers
+from Ingegneria_della_Conoscenza_2021.Code import classifiers, metrics
 from sklearn.model_selection import train_test_split
-import metrics
+
 dataset = pd.read_csv('../Dataset/insurance.csv')
 
 

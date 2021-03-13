@@ -48,9 +48,19 @@ print(dataset)
 print(kmeans)
 # sns.scatterplot(data=dataset, x='age', y='bmi', hue='charges')
 
-# sns.scatterplot(data=dataset, x='age', y='charges', hue='cluster')
-sns.scatterplot(data=dataset, x='age', y='charges', hue='bmi')
-# sns.scatterplot(data=dataset, x='smoker', y='charges', hue='cluster')
+# Cluster Plots
+plt.title('Clusters of Patients')
+sns.scatterplot(data=dataset, x='age', y='charges', hue='cluster')
+plt.show()
+
+plt.title('BMI and Charges Distribution within Clusters')
+sns.scatterplot(data=dataset, x='bmi', y='charges', hue='cluster')
+plt.show()
+
+plt.title('Smokers and Charges Distribution within Cluster')
+sns.scatterplot(data=dataset, x='smoker', y='charges', hue='cluster')
+plt.show()
+
 
 print(dataset.values)
 x_data = dataset[dataset.columns[0:5]].to_numpy()

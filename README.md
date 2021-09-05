@@ -10,10 +10,6 @@ Dataset:
 
 Regina Grimaldi
 
-Cecilia Cariello
-
-Gianfranco Lamorgese
-
 Giuseppe Forziati
 
 Alessandro Ciafardini

@@ -1,11 +1,15 @@
+import os
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from pandas import isnull
 from sklearn.decomposition import PCA
 from sklearn.decomposition import PCA
 import sys
 import joblib
 import pandas as pd
+from sklearn import preprocessing
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -49,7 +53,7 @@ df = pd.read_csv('dataset/anime.csv')
 
 df.drop('members', axis=1, inplace=True)
 
-anime = merge_with_rating(df)
+anime = df # merge_with_rating(df)
 
 # anime.to_csv('dataset/mergeDataset.csv', index=False)
 
@@ -77,6 +81,8 @@ def set_genre_anime(row):
         if frequency_genre[genre] > genre_frequency:
             genre_frequency = frequency_genre[genre]
             final_genre = genre
+    row['genre']= final_genre
+
     new_genre.append(final_genre)
 
 
@@ -88,14 +94,17 @@ def creazionelistGenre(row, list_genre):
             list_genre.append(genre_)
 '''
 
-anime.apply(lambda row: creationFrequency_genre(row, frequency_genre), axis=1)
-print(frequency_genre)
+anime.apply(lambda row:creationFrequency_genre(row, frequency_genre), axis=1)
+
+# print(frequency_genre)
 anime.apply(lambda row: set_genre_anime(row), axis=1)
-anime['genre'] = new_genre
+anime['genre_1'] = new_genre
+print("leng new_genre ", len(new_genre))
 
-#
+anime.to_csv("dataset/final_genre.csv", index=False)
+os.system("pause")
 
-anime['genre'].to_csv("dataset/final_genre.csv", index=False)
+
 
 
 def creazionelistGenre(row, list_genre):
@@ -107,7 +116,7 @@ df = pd.DataFrame()
 anime.apply(lambda row: creazionelistGenre(row, list_genre), axis=1)
 
 df['lista generi'] = list_genre
-df['lista generi'].to_csv('dataset/lista generi.csv', index=False)
+df['lista generi'].to_csv('dataset/lista_generi_diminuita.csv', index=False)
 
 
 # Metodo per trasformare i dati categorici in dati numerici
@@ -127,12 +136,12 @@ def creazioneArrayByColumn(row, array, column_name):
 
 def create_dictionary(array, dizionario):
     size_array = len(array)
-    j = 0
+    # j = 0
     for k in range(size_array):
         dizionario[array[k]] = k
 
-        j = k
-    dizionario['unknown'] = j + 1
+       # j = k
+    # dizionario['unknown'] = j + 1
 
 
 anime.apply(lambda row: set_target_names(row['genre']), axis=1)
@@ -143,8 +152,15 @@ anime.apply(lambda row: set_target_names(row['genre']), axis=1)
 
 # genre
 anime.apply(lambda row: creazioneArrayByColumn(row, array_genre, genre_), axis=1)
-
+i=0
+for k in array_genre:
+   # print(k)
+    if k=='Drama':
+        i = i + 1
+print("i: ",i)
+print("frequency: ",frequency_genre['Drama'])
 create_dictionary(array_genre, genreDict)
+print("genre:\n",genreDict)
 
 anime['genre'] = anime.apply(lambda row: subByColumn(row, genreDict, genre_), axis=1)
 
@@ -164,13 +180,14 @@ anime['name'] = anime.apply(lambda row: subByColumn(row, titleDict, name_), axis
 
 anime = anime.sort_values('genre')
 
-anime['rating'].fillna(method='ffill', inplace=True)
-imputer = KNNImputer(n_neighbors=10, weights="uniform")
-anime['rating'] = imputer.fit_transform(anime[['rating']])
-anime = anime[anime['episodes'].apply(lambda x: x != 'Unknown')]
-anime.reset_index(drop=True)
-anime.to_csv('dataset/table.csv', index=False)
+# anime['rating'].fillna(method='ffill', inplace=True)
 
+df = df[df['rating'].apply(lambda x: not isnull(x))]
+#imputer = KNNImputer(n_neighbors=10, weights="uniform")
+#anime['rating'] = imputer.fit_transform(anime[['rating']])
+# anime = anime[anime['episodes'].apply(lambda x: x != 'Unknown')]
+df.reset_index(drop=True)
+df.to_csv('dataset/table.csv', index=False)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # CLASSIFICATION
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -180,6 +197,12 @@ target = anime['genre']  # column target
 anime.drop(columns=['genre', 'anime_id'], axis=1, inplace=True)
 
 training = anime  # training set
+
+# Create the Scaler object
+scaler = preprocessing.StandardScaler()
+# Fit your data on the scaler object
+scaled_df = scaler.fit_transform(training)
+training = pd.DataFrame(scaled_df)
 
 print(training)
 

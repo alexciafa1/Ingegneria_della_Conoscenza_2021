@@ -9,7 +9,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-from sklearn import model_selection
+from sklearn import model_selection, metrics
 from sklearn.impute import KNNImputer
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import RepeatedStratifiedKFold
@@ -17,6 +17,7 @@ from sklearn.model_selection import GridSearchCV
 
 from sklearn.ensemble import BaggingClassifier
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 
@@ -25,117 +26,142 @@ from sklearn.metrics import precision_score, recall_score, accuracy_score
 from sklearn.metrics import classification_report
 from sklearn.model_selection import cross_validate
 
-anime = pd.read_csv('dataset/anime.csv')
-
-anime.drop('members', axis=1, inplace=True)
+from rating_processing import merge_with_rating
 
 
+genre_ ='genre'
+name_ = 'name'
+type_ = 'type'
+
+array_genre = []
+array_type = []
+array_name = []
+new_genre = []
+list_genre = []
+target_names = []
+
+genreDict = {}
+typeDict = {}
+titleDict = {}
+frequency_genre = {}
+
+df = pd.read_csv('dataset/anime.csv')
+
+df.drop('members', axis=1, inplace=True)
+
+anime = merge_with_rating(df)
+
+# anime.to_csv('dataset/mergeDataset.csv', index=False)
+
+
+
+def creationFrequency_genre(row, dictionary):
+    list_ = str(row['genre']).split(', ')
+    for genre_ in list_:
+        if genre_ not in frequency_genre:
+            dictionary[genre_] = 1
+        else:
+            dictionary[genre_] = dictionary[genre_] + 1
+
+
+def set_target_names(genre):
+    if genre not in target_names:
+        target_names.append(genre)
+
+
+def set_genre_anime(row):
+    list_ = str(row['genre']).split(', ')
+    genre_frequency = 0
+    final_genre = ''
+    for genre in list_:
+        if frequency_genre[genre] > genre_frequency:
+            genre_frequency = frequency_genre[genre]
+            final_genre = genre
+    new_genre.append(final_genre)
+
+
+'''
 def creazionelistGenre(row, list_genre):
     list_ = str(row['genre']).split(', ')
     for genre_ in list_:
         if genre_ not in list_genre:
             list_genre.append(genre_)
+'''
+
+anime.apply(lambda row: creationFrequency_genre(row, frequency_genre), axis=1)
+print(frequency_genre)
+anime.apply(lambda row: set_genre_anime(row), axis=1)
+anime['genre'] = new_genre
+
+#
+
+anime['genre'].to_csv("dataset/final_genre.csv", index=False)
 
 
-list_genre = []
+def creazionelistGenre(row, list_genre):
+    if row['genre'] not in list_genre:
+        list_genre.append(row['genre'])
+
+
+df = pd.DataFrame()
 anime.apply(lambda row: creazionelistGenre(row, list_genre), axis=1)
-list_genre.remove('nan')
+
+df['lista generi'] = list_genre
+df['lista generi'].to_csv('dataset/lista generi.csv', index=False)
+
+
+# Metodo per trasformare i dati categorici in dati numerici
+def subByColumn(row, dizionario, column_name):
+    if row[column_name] is not None:
+        element = row[column_name]
+        if element in dizionario:
+            row[column_name] = dizionario[element]
+    return row[column_name]
+
+
+# Method for creation array (name, type, genre, ...)
+def creazioneArrayByColumn(row, array, column_name):
+    if row[column_name] is not None:
+        array.append(row[column_name])
+
+
+def create_dictionary(array, dizionario):
+    size_array = len(array)
+    j = 0
+    for k in range(size_array):
+        dizionario[array[k]] = k
+
+        j = k
+    dizionario['unknown'] = j + 1
+
+
+anime.apply(lambda row: set_target_names(row['genre']), axis=1)
+# target_names.remove('nan')
+
+# print("target_names: \n", target_names)
+# print("grandezza target_names: ", len(target_names))
 
 # genre
-def creazioneArrayGenre(row, array):
-    if row['genre'] is not None:
-        array.append(row['genre'])
+anime.apply(lambda row: creazioneArrayByColumn(row, array_genre, genre_), axis=1)
 
+create_dictionary(array_genre, genreDict)
 
-genre = []
-
-anime.apply(lambda row: creazioneArrayGenre(row, genre), axis=1)
-
-nGenre = len(genre)
-
-genreDict = {}
-
-j = 0
-
-for k in range(nGenre):
-    genreDict[genre[k]] = k
-
-    j = k
-
-genreDict['unknown'] = j + 1
-
-
-def subGenre(row, dizionario):
-    if row['genre'] is not None:
-        element = row['genre']
-        if element in dizionario:
-            row['genre'] = genreDict[element]
-    return row['genre']
-
-
-anime['genre'] = anime.apply(lambda row: subGenre(row, genreDict), axis=1)
-
+anime['genre'] = anime.apply(lambda row: subByColumn(row, genreDict, genre_), axis=1)
 
 # type
-def creazioneArrayType(row, array):
-    if row['type'] is not None:
-        array.append(row['type'])
+anime.apply(lambda row: creazioneArrayByColumn(row, array_type, type_), axis=1)
 
+create_dictionary(array_type, typeDict)
 
-ty = []
-anime.apply(lambda row: creazioneArrayType(row, ty), axis=1)
+anime['type'] = anime.apply(lambda row: subByColumn(row, typeDict, type_), axis=1)
 
-nType = len(ty)
+# name anime
+anime.apply(lambda row: creazioneArrayByColumn(row, array_name, name_), axis=1)
 
-typeDict = {}
+create_dictionary(array_name, titleDict)
 
-j = 0
-for n in range(nType):
-    typeDict[ty[n]] = n
-    j = n
-typeDict['unknown'] = j + 1
+anime['name'] = anime.apply(lambda row: subByColumn(row, titleDict, name_), axis=1)
 
-
-def subType(row, dizionario):
-    if row['type'] is not None:
-
-        element = row['type']
-
-        if element in dizionario:
-            row['type'] = typeDict[element]
-
-    return row['type']
-
-
-anime['type'] = anime.apply(lambda row: subType(row, typeDict), axis=1)
-
-
-# name
-def creazioneArrayTitle(row, array):
-    if row['name'] is not None:
-        array.append(row['name'])
-
-
-title = []
-anime.apply(lambda row: creazioneArrayTitle(row, title), axis=1)
-nTitle = len(title)
-titleDict = {}
-j = 0
-for i in range(nTitle):
-    titleDict[title[i]] = i
-    j = i
-titleDict['unknown'] = j + 1
-
-
-def subTitle(row, dizionario):
-    if row['name'] is not None:
-        element = row['name']
-        if element in dizionario:
-            row['name'] = titleDict[element]
-    return row['name']
-
-
-anime['name'] = anime.apply(lambda row: subTitle(row, titleDict), axis=1)
 anime = anime.sort_values('genre')
 
 anime['rating'].fillna(method='ffill', inplace=True)
@@ -150,30 +176,77 @@ anime.to_csv('dataset/table.csv', index=False)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 target = anime['genre']  # column target
+
 anime.drop(columns=['genre', 'anime_id'], axis=1, inplace=True)
 
 training = anime  # training set
+
 print(training)
 
 x_train, x_test, y_train, y_test = train_test_split(training, target, test_size=0.3, random_state=0)
-
 # KNN
-knn = KNeighborsClassifier()
+knn = KNeighborsClassifier(metric='manhattan', n_neighbors=19, weights='uniform')
+knn.fit(x_train, y_train)
+y_pred = knn.predict(x_test)
+print("Accuracy knn:", metrics.accuracy_score(y_test, y_pred))
 
+# GAUSSIAN
+gau = GaussianNB()
+gau.fit(x_train, y_train)
+y_pred_gau = gau.predict(x_test)
+print("Accuracy gau :", metrics.accuracy_score(y_test, y_pred_gau))
+# RANDOM FOREST
+rf = RandomForestClassifier(n_estimators=1000, criterion='gini')
+rf.fit(x_train, y_train)
+y_pred_rf = rf.predict(x_test)
+print("Accuracy rf:", metrics.accuracy_score(y_test, y_pred_rf))
+
+'''
 # dati da testare
 n_neighbors = range(1, 21, 2)
 weights = ['uniform', 'distance']
 metric = ['euclidean', 'manhattan', 'hamming']
 
 grid = dict(n_neighbors=n_neighbors, weights=weights, metric=metric)
-
-grid_search = GridSearchCV(estimator=knn, param_grid=grid, n_jobs=-1, error_score=0)
+cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=1)
+grid_search = GridSearchCV(estimator=knn, param_grid=grid, cv=cv, n_jobs=-1, error_score=0)
 grid_result = grid_search.fit(x_train, y_train)
 print("Miglior combinazione di parametri ritrovata:\n")
 print(grid_search.best_params_)
 
 y_true, y_pred = y_test, grid_search.predict(x_test)
-print(classification_report(y_true, y_pred, target_names=list_genre))
+# print('y_pred;\n', y_pred, '\ny_true;\n', y_true)
+print(classification_report(y_true, y_pred, target_names=target_names))
+'''
+'''
+#---------------------------------------------------------------------
+
+y_test.apply(lambda row: set_target_names(row))
+# target_names.remove('nan')
+print("target_names: \n", target_names)
+print("grandezza target_names: ", len(target_names))
+print('Target\n', target)
+#---------------------------------------------------------------------
+'''
+
+'''
+Kfold = model_selection.KFold(n_splits=10, random_state=None)
+knn_model = KNeighborsClassifier(metric='hamming', n_neighbors= 3, weights= 'distance')
+
+scoring = {'accuracy':make_scorer(accuracy_score),
+            'precision':make_scorer(precision_score, average='macro',zero_division=0),
+            'recall':make_scorer(recall_score, average='macro',zero_division=0)}
+
+knn = cross_validate(knn_model, training, target, cv=Kfold, scoring=scoring)
+
+models_scores_table = pd.DataFrame( {'KNearestNeighbor':[knn['test_accuracy'].mean(),
+                                                              knn['test_precision'].mean(),
+                                                              knn['test_recall'].mean()]},
+
+                                      index=['Accuracy', 'Precision', 'Recall'])
+
+models_scores_table.to_csv("dataset/models_scores_table.csv", index=False)
+'''
 '''
 pca = PCA(n_components=3)
 pca.fit(animelist)

@@ -2,9 +2,12 @@ import csv
 import os
 
 import pandas as pd
-
+# import warnings filter
+from warnings import simplefilter
+# ignore all future warnings
+simplefilter(action='ignore', category=FutureWarning)
 from classification_function import KNNClassification
-from preprocessing_function import conversionDic
+
 
 conversion_dic = {}
 genre_dic = {}
@@ -43,9 +46,8 @@ def predict_genre(name, score, type_, episodes, duration, producers, studios, so
     source_format = search_format_name(source)
 
     knn = KNNClassification(training, target)
+    genre_predict = knn.predict([[score, episodes, duration, producers_format, studios_format, name_format, type_format, source_format]])
+    final_val = [key for key, val in genre_dic.items() if val == genre_predict[0]]
+    print("Il genere dell'anime Naruto e': ", final_val[0])
 
-    predizione_genere = knn.predict([name_format, score, type_format, episodes, duration, producers_format, studios_format, source_format])
-    print(" numero genere ",predizione_genere)
-     # genre_predict =
-
-    print("ecco a lei senpai-sama")
+    print("Ecco a lei senpai-sama")

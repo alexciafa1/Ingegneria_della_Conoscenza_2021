@@ -31,7 +31,7 @@ elif risposta == '2':
     source = input("Qual e' l'origine dell'anime che vuoi classificare? (es. e' stato adattato un manga? è originale?\n")
 
     # funzione predict
-    genre_predicted = predict_genre([name, score, type_, episodes, duration, producers, studios, source])
+    genre_predicted = predict_genre(name, score, type_, episodes, duration, producers, studios, source)
     '''
     passare gli argomenti
     normalizzarli rispetto ai dizionari e al dataset

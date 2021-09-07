@@ -1,3 +1,5 @@
+import os
+
 from sklearn import preprocessing
 from sklearn import model_selection
 from sklearn.model_selection import train_test_split
@@ -6,15 +8,18 @@ from preprocessing_function import *
 
 dictionary_producers = {}
 dictionary_studios = {}
+dictionary_rating={}
 
 anime = pd.DataFrame()
 data = pd.read_csv('dataset/anime.csv')
-data = data.iloc[:, [1, 2, 3, 6, 7, 10, 12, 13, 14]]
+data = data.iloc[:, [1, 2, 3, 6, 7, 15, 10, 12, 13, 14]]
 anime = data.copy()
 
 anime = anime[anime['Episodes'].apply(lambda x: x != 'Unknown')]
 anime = anime[anime['Studios'].apply(lambda x: x != 'Unknown')]
-anime = anime[anime['Score'].apply(lambda x: x != 'Unknown')]
+anime["Score"] = anime["Score"].replace("Unknown", 5).astype(float)
+# anime = anime[anime['Score'].apply(lambda x: x != 'Unknown')]
+anime = anime[anime['Rating'].apply(lambda x: x != 'Unknown')]
 anime = anime[anime['Genres'].apply(lambda x: x != 'Unknown')]
 anime = anime[anime['Producers'].apply(lambda x: x != 'Unknown')]
 anime = anime[anime['Duration'].apply(lambda x: x != 'Unknown')]
@@ -22,6 +27,12 @@ anime = anime[anime['Source'].apply(lambda x: x != 'Unknown')]
 anime.reset_index(drop=True)
 # format Duration
 anime['Duration_format'] = anime.apply(lambda row: format_duration_anime(row), axis=1)
+
+# format rating
+anime['Rating_format'] = anime.apply(lambda row: set_rating(row), axis=1)
+anime.apply(lambda row: creation_frequency_dictionary(row, dictionary_rating, 'Rating_format'), axis=1)
+print("dictionary_rating ", dictionary_rating)
+print(anime['Rating_format'])
 
 # format genre
 anime.apply(lambda row: creation_frequency_dictionary(row, dictionary_genre, 'Genres'), axis=1)
@@ -37,12 +48,12 @@ anime['Producers_format'] = anime.apply(lambda row: set_columns_anime(row, dicti
 anime.apply(lambda row: creation_frequency_dictionary(row, dictionary_studios, 'Studios'), axis=1)
 # print("frequency ", dictionary_studios)
 anime['Studios_format'] = anime.apply(lambda row: set_columns_anime(row, dictionary_studios, 'Studios'), axis=1)
-anime.to_csv("dataset/anime_ridotto.csv", index=False)
+anime.to_csv("dataset/anime_ridotto_2.csv", index=False)
 
 # array di conversione per categorici/numerici
 anime.apply(
     lambda column: conversion_string(anime['Genre_format'], anime['Name'], anime['Type'], anime['Producers_format'],
-                                     anime['Studios_format'], anime['Source']), axis=0)
+                                     anime['Studios_format'], anime['Source'], anime['Rating_format']), axis=0)
 '''import csv
 print(conversionDic)
 with open('dataset/conversionDic.csv', 'w', encoding="utf-8") as f:
@@ -75,29 +86,33 @@ anime['Type_format'] = anime.apply(lambda row: sub_by_column(row, 'Type'), axis=
 # Studios from categorical to numeric
 anime['Source_format'] = anime.apply(lambda row: sub_by_column(row, 'Source'), axis=1)
 
+# Rating from categorical to numeric
+anime['Rating_format'] = anime.apply(lambda row: sub_by_column(row, 'Rating_format'), axis=1)
+
 anime_pp = anime.drop(columns=['Name', 'Genres', 'Type', 'Producers', 'Source', 'Duration', 'Studios'])
 
-# anime_pp.to_csv("dataset/anime_pp.csv", index=False)
-
+anime_pp.to_csv("dataset/anime_pp_2.csv", index=False)
+os.system("pause")
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # CLASSIFICATION
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 target = anime_pp['Genre_format']  # column target
-training = anime_pp.drop(columns=['Genre_format'])  # training set
+training = anime_pp.drop(columns=['Genre_format', 'Rating'])  # training set
 # print(training)
-'''
+
 # Create the Scaler object
 scaler = preprocessing.StandardScaler()
 # Fit your data on the scaler object
 scaled_df = scaler.fit_transform(training)
 training = pd.DataFrame(scaled_df)
+
 '''
 x = training.values  # returns a numpy array
 min_max_scaler = preprocessing.MinMaxScaler()
 x_scaled = min_max_scaler.fit_transform(x)
 training = pd.DataFrame(x_scaled)
-
+'''
 # KNN CLASSIFICATION
 knn = KNNClassification(training, target)
 

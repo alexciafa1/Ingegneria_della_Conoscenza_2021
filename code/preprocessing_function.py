@@ -7,7 +7,7 @@ dictionary_genre = {}
 conversionDic = {}
 
 
-def conversion_string(columnGenre, columnName, columnType, columnProducers, columnStudios, columnSource):
+def conversion_string(columnGenre, columnName, columnType, columnProducers, columnStudios, columnSource, columnRating):
     i = 0
     for genre in columnGenre:
         if genre not in conversionDic:
@@ -44,9 +44,31 @@ def conversion_string(columnGenre, columnName, columnType, columnProducers, colu
             conversionDic[source] = i
             i = i + 1
     conversionDic["fine_source"] = -1
+    i = 0
+    for rating in columnRating:
+        if rating not in conversionDic:
+            conversionDic[rating] = i
+            i = i + 1
+    conversionDic["fine_rating"] = -1
+
+def set_rating(row):
+    if row['Rating'] =='R - 17+ (violence & profanity)':
+        row['Rating'] = 'R'
+    if row['Rating'] == 'PG-13 - Teens 13 or older':
+        row['Rating'] = 'PG-13'
+    if row['Rating'] == 'PG - Children':
+        row['Rating'] = 'PG-13'
+    if row['Rating'] == 'R+ - Mild Nudity':
+        row['Rating'] = 'R+'
+    if row['Rating'] =='G - All Ages':
+        row['Rating'] = 'G'
+    if row['Rating'] =='Rx - Hentai':
+        row['Rating'] = 'R+'
+    return row['Rating']
 
 
 def creation_frequency_dictionary(row, dictionary, column_name):
+
     list_ = str(row[column_name]).split(', ')
 
     for genre_ in list_:
@@ -69,9 +91,9 @@ def set_columns_anime(row, dictionary, column_name):
         if dictionary[name] > genre_frequency:
             genre_frequency = dictionary[name]
             final_genre = name
-    row['genre'] = final_genre
+    row[column_name] = final_genre
     new_genre.append(final_genre)
-    return row['genre']
+    return row[column_name]
 
 
 '''

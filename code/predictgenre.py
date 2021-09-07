@@ -48,6 +48,6 @@ def predict_genre(name, score, type_, episodes, duration, producers, studios, so
     knn = KNNClassification(training, target)
     genre_predict = knn.predict([[score, episodes, duration, producers_format, studios_format, name_format, type_format, source_format]])
     final_val = [key for key, val in genre_dic.items() if val == genre_predict[0]]
-    print("Il genere dell'anime Naruto e': ", final_val[0])
+    print(f"Il genere dell'anime {name} e': ", final_val[0])
 
     print("Ecco a lei senpai-sama")

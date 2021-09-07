@@ -26,8 +26,13 @@ from sklearn.metrics import precision_score, recall_score, accuracy_score
 from sklearn.metrics import classification_report
 from sklearn.model_selection import cross_validate
 
+
 def merge_with_rating(anime):
-    rating = pd.read_csv('dataset/rating.csv')
+    rating = pd.read_csv('../dataset/rating.csv')
+
+    #
+    # rating.loc[rating.rating <= 0, 'rating'] = 5
+    # print(rating)
 
     MRPU = rating.groupby(['anime_id']).mean().reset_index()
 
@@ -37,11 +42,15 @@ def merge_with_rating(anime):
 
     MRPU.to_csv("dataset/mru.csv", index=False)
 
-    mergedata = pd.merge(anime, MRPU, on=['anime_id'])
+    # print("len mrpu ", len(MRPU))
 
-    mergedata = mergedata[mergedata.mean_rating >= 0]
+    merge_data = pd.merge(anime, MRPU, how="inner", on=['anime_id'])
 
-    return mergedata
+    # merge_data = merge_data[merge_data.mean_rating >= 0]
+
+    return merge_data
+
+
 '''
 user = pd.merge(user,MRPU,on=['user_id','user_id'])
 

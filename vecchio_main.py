@@ -1,213 +1,166 @@
 import os
 
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from pandas import isnull
-from sklearn.decomposition import PCA
-from sklearn.decomposition import PCA
-import sys
-import joblib
 import pandas as pd
 from sklearn import preprocessing
-import numpy as np
-import matplotlib.pyplot as plt
 
-from sklearn import model_selection, metrics
-from sklearn.impute import KNNImputer
+from sklearn import metrics
 from sklearn.model_selection import train_test_split
-from sklearn.model_selection import RepeatedStratifiedKFold
-from sklearn.model_selection import GridSearchCV
 
-from sklearn.ensemble import BaggingClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC
 
-from sklearn.metrics import make_scorer
-from sklearn.metrics import precision_score, recall_score, accuracy_score
-from sklearn.metrics import classification_report
-from sklearn.model_selection import cross_validate
+from code.rating_processing import merge_with_rating
+from code.preprocessing_function import *
 
-from rating_processing import merge_with_rating
-
-
-genre_ ='genre'
+genre_ = 'genre_1'
 name_ = 'name'
 type_ = 'type'
 
+array_episodes = []
 array_genre = []
 array_type = []
 array_name = []
-new_genre = []
+# new_genre = []
 list_genre = []
-target_names = []
+# target_names = []
 
 genreDict = {}
 typeDict = {}
 titleDict = {}
-frequency_genre = {}
+episodesDict ={}
+# frequency_genre = {}
 
-df = pd.read_csv('dataset/anime.csv')
+anime = pd.DataFrame()
+data = pd.read_csv('dataset/anime.csv')
+data.drop('members', axis=1, inplace=True)
+anime = data.copy()
 
-df.drop('members', axis=1, inplace=True)
+anime = clean_dataframe(anime)
+print(len(anime))
 
-anime = df # merge_with_rating(df)
+anime.to_csv("anime_pre.csv", index=False)
+
+anime = merge_with_rating(anime)
+anime = anime.apply(lambda row: durata_episodes(row), axis=1)
+print(anime['episodes'])
+# anime = anime.apply(lambda row: round_rating(row), axis=1)
+# print(anime['mean_rating'],"\n", anime['rating'] )
+# anime.loc[anime.mean_rating <= 0, 'mean_rating'] = 5
+os.system("pause")
+anime.to_csv("anime_merge.csv", index=False)
+
+
 
 # anime.to_csv('dataset/mergeDataset.csv', index=False)
 
-
-
-def creationFrequency_genre(row, dictionary):
-    list_ = str(row['genre']).split(', ')
-    for genre_ in list_:
-        if genre_ not in frequency_genre:
-            dictionary[genre_] = 1
-        else:
-            dictionary[genre_] = dictionary[genre_] + 1
-
-
-def set_target_names(genre):
-    if genre not in target_names:
-        target_names.append(genre)
-
-
-def set_genre_anime(row):
-    list_ = str(row['genre']).split(', ')
-    genre_frequency = 0
-    final_genre = ''
-    for genre in list_:
-        if frequency_genre[genre] > genre_frequency:
-            genre_frequency = frequency_genre[genre]
-            final_genre = genre
-    row['genre']= final_genre
-
-    new_genre.append(final_genre)
-
-
-'''
-def creazionelistGenre(row, list_genre):
-    list_ = str(row['genre']).split(', ')
-    for genre_ in list_:
-        if genre_ not in list_genre:
-            list_genre.append(genre_)
-'''
-
-anime.apply(lambda row:creationFrequency_genre(row, frequency_genre), axis=1)
-
+anime.apply(lambda row: creation_frequency_dictionary(row, frequency_genre), axis=1)
 # print(frequency_genre)
-anime.apply(lambda row: set_genre_anime(row), axis=1)
+anime['genre'] = anime.apply(lambda row: set_columns_anime(row), axis=1)
+
 anime['genre_1'] = new_genre
-print("leng new_genre ", len(new_genre))
+
+# print("leng new_genre ", len(new_genre))
 
 anime.to_csv("dataset/final_genre.csv", index=False)
-os.system("pause")
 
+anime.apply(lambda column: conversion_string(anime['genre'], anime['type'], anime['name'], anime['episodes']), axis=0)
 
+# print("conversion: \n", conversionDic)
 
+anime.apply(lambda row: creation_list_genre(row, list_genre), axis=1)
 
-def creazionelistGenre(row, list_genre):
-    if row['genre'] not in list_genre:
-        list_genre.append(row['genre'])
+# print("list genre ", list_genre)
 
+# anime['lista generi'] = list_genre
 
-df = pd.DataFrame()
-anime.apply(lambda row: creazionelistGenre(row, list_genre), axis=1)
+# anime['lista generi'].to_csv('dataset/lista_generi_diminuita.csv', index=False)
 
-df['lista generi'] = list_genre
-df['lista generi'].to_csv('dataset/lista_generi_diminuita.csv', index=False)
-
-
-# Metodo per trasformare i dati categorici in dati numerici
-def subByColumn(row, dizionario, column_name):
-    if row[column_name] is not None:
-        element = row[column_name]
-        if element in dizionario:
-            row[column_name] = dizionario[element]
-    return row[column_name]
-
-
-# Method for creation array (name, type, genre, ...)
-def creazioneArrayByColumn(row, array, column_name):
-    if row[column_name] is not None:
-        array.append(row[column_name])
-
-
-def create_dictionary(array, dizionario):
-    size_array = len(array)
-    # j = 0
-    for k in range(size_array):
-        dizionario[array[k]] = k
-
-       # j = k
-    # dizionario['unknown'] = j + 1
-
-
-anime.apply(lambda row: set_target_names(row['genre']), axis=1)
+# anime.apply(lambda row: set_target_names(row['genre']), axis=1)
 # target_names.remove('nan')
 
 # print("target_names: \n", target_names)
 # print("grandezza target_names: ", len(target_names))
 
 # genre
-anime.apply(lambda row: creazioneArrayByColumn(row, array_genre, genre_), axis=1)
-i=0
-for k in array_genre:
-   # print(k)
-    if k=='Drama':
-        i = i + 1
-print("i: ",i)
-print("frequency: ",frequency_genre['Drama'])
-create_dictionary(array_genre, genreDict)
-print("genre:\n",genreDict)
+anime.apply(lambda row: creation_array_by_column(row, array_genre, genre_), axis=1)
 
-anime['genre'] = anime.apply(lambda row: subByColumn(row, genreDict, genre_), axis=1)
+create_dictionary(array_genre, genreDict)
+
+anime[genre_] = anime.apply(lambda row: sub_by_column(row, genreDict, genre_), axis=1)
 
 # type
-anime.apply(lambda row: creazioneArrayByColumn(row, array_type, type_), axis=1)
+anime.apply(lambda row: creation_array_by_column(row, array_type, type_), axis=1)
 
 create_dictionary(array_type, typeDict)
 
-anime['type'] = anime.apply(lambda row: subByColumn(row, typeDict, type_), axis=1)
+anime[type_] = anime.apply(lambda row: sub_by_column(row, typeDict, type_), axis=1)
 
 # name anime
-anime.apply(lambda row: creazioneArrayByColumn(row, array_name, name_), axis=1)
+anime.apply(lambda row: creation_array_by_column(row, array_name, name_), axis=1)
 
 create_dictionary(array_name, titleDict)
 
-anime['name'] = anime.apply(lambda row: subByColumn(row, titleDict, name_), axis=1)
+anime[name_] = anime.apply(lambda row: sub_by_column(row, titleDict, name_), axis=1)
 
-anime = anime.sort_values('genre')
+# episodes
+# genre
+anime.apply(lambda row: creation_array_by_column(row, array_episodes, 'episodes'), axis=1)
+
+create_dictionary(array_episodes, episodesDict)
+
+anime['episodes'] = anime.apply(lambda row: sub_by_column(row, episodesDict, 'episodes'), axis=1)
+# anime = anime.sort_values('genre')
 
 # anime['rating'].fillna(method='ffill', inplace=True)
 
-df = df[df['rating'].apply(lambda x: not isnull(x))]
-#imputer = KNNImputer(n_neighbors=10, weights="uniform")
-#anime['rating'] = imputer.fit_transform(anime[['rating']])
+anime = anime[anime['rating'].apply(lambda x: not isnull(x))]
+
+anime = anime[anime['mean_rating'].apply(lambda x: x >= 0)]
+
+
+
+anime.reset_index(drop=True)
+
+
 # anime = anime[anime['episodes'].apply(lambda x: x != 'Unknown')]
-df.reset_index(drop=True)
-df.to_csv('dataset/table.csv', index=False)
+# anime.reset_index(drop=True)
+
+# anime = anime.drop(columns=['genre'])
+
+print("frequency genre \n", frequency_genre)
+print("dictionary \n", genreDict)
+anime.to_csv('dataset/table.csv', index=False)
+
+os.system("pause")
+
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # CLASSIFICATION
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-target = anime['genre']  # column target
+target = anime['genre_1']  # column target
 
-anime.drop(columns=['genre', 'anime_id'], axis=1, inplace=True)
+anime.drop(columns=['genre', 'genre_1', 'anime_id', 'rating'], axis=1, inplace=True)
 
 training = anime  # training set
-
+'''
 # Create the Scaler object
 scaler = preprocessing.StandardScaler()
 # Fit your data on the scaler object
 scaled_df = scaler.fit_transform(training)
 training = pd.DataFrame(scaled_df)
+'''
+
+x = training.values  # returns a numpy array
+min_max_scaler = preprocessing.MinMaxScaler()
+x_scaled = min_max_scaler.fit_transform(x)
+training = pd.DataFrame(x_scaled)
 
 print(training)
 
 x_train, x_test, y_train, y_test = train_test_split(training, target, test_size=0.3, random_state=0)
-# KNN
+
+
 knn = KNeighborsClassifier(metric='manhattan', n_neighbors=19, weights='uniform')
 knn.fit(x_train, y_train)
 y_pred = knn.predict(x_test)

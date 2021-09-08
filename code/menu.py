@@ -7,6 +7,7 @@
 
 
 #def menu():
+from content_based_recommender import set_recommender
 from predictgenre import *
 
 print("^^^^^^^^^^^^^^^^^^^ ANIME RECOMMENDER ^^^^^^^^^^^^^^^^^^^\n")
@@ -18,6 +19,33 @@ risposta = input(string)
 
 if risposta == '1':
     print("dimmi il genere")
+    '''
+    inserire il nome di un anime che ti è piaciuto
+    se è un film o serie tv o ova o ona
+    quanto dura?
+    assegna uno score ?
+    genere
+    conosci la casa produttrice? si o no 
+    conosci lo studio di animazione? si o no 
+    sai dirmi il rating di questo anime? si o no
+    conosci l'orgine di questo anime? si o no (non si fa)
+    
+    4 + 2^4 combinazioni =  16 = 20 casi possibili (12 casi possibili)
+    genere
+   '''
+    name = "Attack on Titan"
+   # type_ = "TV"
+    duration = "23"
+    score = "8.51"
+    #producers = "Aniplex"
+    #studio = "Studio Pierrot"
+    #rating = "PG-13"
+    source ="Manga"
+    episodes ="100"
+    genre ="Action"
+
+    recommender = set_recommender(genre, name, duration, score, episodes, source)
+
 elif risposta == '2':
     print("ti chiedero' un po' di cose. inziamo...")
     name = input(" Qual e' il nome dell'anime che vuoi classificare?\n ")
@@ -32,6 +60,7 @@ elif risposta == '2':
 
     # funzione predict
     genre_predicted = predict_genre(name, score, type_, episodes, duration, producers, studios, source)
+
     '''
     passare gli argomenti
     normalizzarli rispetto ai dizionari e al dataset

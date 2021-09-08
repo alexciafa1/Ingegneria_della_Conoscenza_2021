@@ -7,7 +7,7 @@ from classification_function import *
 from preprocessing_function import *
 
 anime = pd.DataFrame()
-data = pd.read_csv('dataset/anime.csv')
+data = pd.read_csv('../dataset/anime.csv')
 data = data.iloc[:, [1, 2, 3, 6, 7, 15, 10, 12, 13, 14]]
 anime = data.copy()
 
@@ -21,12 +21,12 @@ anime['Rating_format'] = anime.apply(lambda row: set_rating(row), axis=1)
 anime.apply(lambda row: creation_frequency_dictionary(row, dictionary_rating, 'Rating_format'), axis=1)
 # print("dictionary_rating ", dictionary_rating)
 
-
 # format genre
-anime.apply(lambda row: creation_frequency_dictionary(row, dictionary_genre, 'Genres'), axis=1)
-# print("frequency ", dictionary_genre)
-anime['Genre_format'] = anime.apply(lambda row: set_columns_anime(row, dictionary_genre, 'Genres'), axis=1)
 
+anime['Genre_format'] = anime.apply(lambda row: set_genre_anime(row, 'Genres'), axis=1)
+
+anime.apply(lambda row: creation_frequency_dictionary(row, dictionary_genre, 'Genre_format'), axis=1)
+print("frequency ", dictionary_genre)
 # format producers
 anime.apply(lambda row: creation_frequency_dictionary(row, dictionary_producers, 'Producers'), axis=1)
 # print("frequency ", dictionary_producers)
@@ -36,7 +36,7 @@ anime['Producers_format'] = anime.apply(lambda row: set_columns_anime(row, dicti
 anime.apply(lambda row: creation_frequency_dictionary(row, dictionary_studios, 'Studios'), axis=1)
 # print("frequency ", dictionary_studios)
 anime['Studios_format'] = anime.apply(lambda row: set_columns_anime(row, dictionary_studios, 'Studios'), axis=1)
-anime.to_csv("dataset/anime_ridotto_2.csv", index=False)
+anime.to_csv("../dataset/anime_ridotto_2.csv", index=False)
 
 # array di conversione per categorici/numerici
 anime.apply(
@@ -49,7 +49,7 @@ conversionDataset = pd.DataFrame()
 conversionDataset['Chiave'] = conversionDic.keys()
 conversionDataset['Valore'] = conversionDic.values()
 
-conversionDataset.to_csv("dataset/conversion_dic.csv", index=False)
+conversionDataset.to_csv("../dataset/conversion_dic.csv", index=False)
 
 # name from categorical to numeric
 anime['Name_format'] = anime.apply(lambda row: convert_by_column(row, 'Name'), axis=1)
@@ -74,7 +74,7 @@ anime['Rating_format'] = anime.apply(lambda row: convert_by_column(row, 'Rating_
 
 anime_pp = anime.drop(columns=['Name', 'Genres', 'Type', 'Producers', 'Source', 'Duration', 'Studios'])
 
-anime_pp.to_csv("dataset/anime_pp_2.csv", index=False)
+anime_pp.to_csv("../dataset/anime_pp_2.csv", index=False)
 
 os.system("pause")
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

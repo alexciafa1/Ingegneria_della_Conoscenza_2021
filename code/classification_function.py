@@ -16,7 +16,7 @@ def KNNClassification(training, target):
     knn = KNeighborsClassifier(metric='manhattan', n_neighbors=19, weights='uniform')
     knn.fit(x_train, y_train)
     y_pred = knn.predict(x_test)
-    print("Accuracy knn:", metrics.accuracy_score(y_test, y_pred))
+    # print("Accuracy knn:", metrics.accuracy_score(y_test, y_pred))
     return knn
 
 

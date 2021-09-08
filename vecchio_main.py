@@ -87,21 +87,21 @@ anime.apply(lambda row: creation_array_by_column(row, array_genre, genre_), axis
 
 create_dictionary(array_genre, genreDict)
 
-anime[genre_] = anime.apply(lambda row: sub_by_column(row, genreDict, genre_), axis=1)
+anime[genre_] = anime.apply(lambda row: convert_by_column(row, genreDict, genre_), axis=1)
 
 # type
 anime.apply(lambda row: creation_array_by_column(row, array_type, type_), axis=1)
 
 create_dictionary(array_type, typeDict)
 
-anime[type_] = anime.apply(lambda row: sub_by_column(row, typeDict, type_), axis=1)
+anime[type_] = anime.apply(lambda row: convert_by_column(row, typeDict, type_), axis=1)
 
 # name anime
 anime.apply(lambda row: creation_array_by_column(row, array_name, name_), axis=1)
 
 create_dictionary(array_name, titleDict)
 
-anime[name_] = anime.apply(lambda row: sub_by_column(row, titleDict, name_), axis=1)
+anime[name_] = anime.apply(lambda row: convert_by_column(row, titleDict, name_), axis=1)
 
 # episodes
 # genre
@@ -109,7 +109,7 @@ anime.apply(lambda row: creation_array_by_column(row, array_episodes, 'episodes'
 
 create_dictionary(array_episodes, episodesDict)
 
-anime['episodes'] = anime.apply(lambda row: sub_by_column(row, episodesDict, 'episodes'), axis=1)
+anime['episodes'] = anime.apply(lambda row: convert_by_column(row, episodesDict, 'episodes'), axis=1)
 # anime = anime.sort_values('genre')
 
 # anime['rating'].fillna(method='ffill', inplace=True)

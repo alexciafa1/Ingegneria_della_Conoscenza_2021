@@ -1,10 +1,11 @@
 from pandas import isnull
 from sklearn.impute import KNNImputer
 
-new_genre = []
-target_names = []
 dictionary_genre = {}
 conversionDic = {}
+dictionary_producers = {}
+dictionary_studios = {}
+dictionary_rating = {}
 
 
 def conversion_string(columnGenre, columnName, columnType, columnProducers, columnStudios, columnSource, columnRating):
@@ -51,8 +52,9 @@ def conversion_string(columnGenre, columnName, columnType, columnProducers, colu
             i = i + 1
     conversionDic["fine_rating"] = -1
 
+
 def set_rating(row):
-    if row['Rating'] =='R - 17+ (violence & profanity)':
+    if row['Rating'] == 'R - 17+ (violence & profanity)':
         row['Rating'] = 'R'
     if row['Rating'] == 'PG-13 - Teens 13 or older':
         row['Rating'] = 'PG-13'
@@ -60,27 +62,20 @@ def set_rating(row):
         row['Rating'] = 'PG-13'
     if row['Rating'] == 'R+ - Mild Nudity':
         row['Rating'] = 'R+'
-    if row['Rating'] =='G - All Ages':
+    if row['Rating'] == 'G - All Ages':
         row['Rating'] = 'G'
-    if row['Rating'] =='Rx - Hentai':
+    if row['Rating'] == 'Rx - Hentai':
         row['Rating'] = 'R+'
     return row['Rating']
 
 
 def creation_frequency_dictionary(row, dictionary, column_name):
-
     list_ = str(row[column_name]).split(', ')
-
-    for genre_ in list_:
-        if genre_ not in dictionary:
-            dictionary[genre_] = 1
+    for element in list_:
+        if element not in dictionary:
+            dictionary[element] = 1
         else:
-            dictionary[genre_] = dictionary[genre_] + 1
-
-
-def set_target_names(genre):
-    if genre not in target_names:
-        target_names.append(genre)
+            dictionary[element] = dictionary[element] + 1
 
 
 def set_columns_anime(row, dictionary, column_name):
@@ -92,26 +87,11 @@ def set_columns_anime(row, dictionary, column_name):
             genre_frequency = dictionary[name]
             final_genre = name
     row[column_name] = final_genre
-    new_genre.append(final_genre)
     return row[column_name]
 
 
-'''
-def creazionelistGenre(row, list_genre):
-    if row['genre'] not in list_genre:
-        list_genre.append(row['genre'])
-'''
-
-
-def creation_list_genre(row, list_genre):
-    list_ = str(row['genre']).split(', ')
-    for genre_ in list_:
-        if genre_ not in list_genre:
-            list_genre.append(genre_)
-
-
 # Metodo per trasformare i dati categorici in dati numerici
-def sub_by_column(row, column_name):
+def convert_by_column(row, column_name):
     if row[column_name] in conversionDic:
         element = row[column_name]
         row[column_name] = conversionDic[element]
@@ -119,53 +99,23 @@ def sub_by_column(row, column_name):
     return row[column_name]
 
 
-# Method for creation array (name, type, genre, ...)
-def creation_array_by_column(row, array, column_name):
-    if row[column_name] is not None:
-        array.append(row[column_name])
-
-
-def create_dictionary(array, dizionario):
-    size_array = len(array)
-    j = 0
-    for k in range(size_array):
-        dizionario[array[k]] = k
-
-    j = k
-    dizionario['unknown'] = j + 1
-
-
 def clean_dataframe(anime):
-    anime = anime[anime['genre'].apply(lambda x: not isnull(x))]
+    anime = anime[anime['Episodes'].apply(lambda x: x != 'Unknown')]
+    anime = anime[anime['Studios'].apply(lambda x: x != 'Unknown')]
+    anime["Score"] = anime["Score"].replace("Unknown", 5).astype(float)
+    # anime = anime[anime['Score'].apply(lambda x: x != 'Unknown')]
+    anime = anime[anime['Rating'].apply(lambda x: x != 'Unknown')]
+    anime = anime[anime['Genres'].apply(lambda x: x != 'Unknown')]
+    anime = anime[anime['Producers'].apply(lambda x: x != 'Unknown')]
+    anime = anime[anime['Duration'].apply(lambda x: x != 'Unknown')]
+    anime = anime[anime['Source'].apply(lambda x: x != 'Unknown')]
     anime.reset_index(drop=True)
-
-    anime = anime[anime['type'].apply(lambda x: not isnull(x))]
-    anime.reset_index(drop=True)
-
-    anime = anime[anime['episodes'].apply(lambda x: x != 'Unknown')]
-    anime.reset_index(drop=True)
-
-    imputer = KNNImputer(n_neighbors=10, weights="uniform")
-    anime['rating'] = imputer.fit_transform(anime[['rating']])
-
     return anime
 
 
 def round_rating(row):
     row['rating'] = round(row['rating'], 2)
     row['mean_rating'] = round(row['mean_rating'], 2)
-    return row
-
-
-def durata_episodes(row):
-    durata = int(row['episodes'])
-    if 1 <= durata <= 10:
-        new = 'breve'
-    if 11 <= durata <= 50:
-        new = 'medio'
-    if durata > 50:
-        new = 'lungo'
-    row['episodes'] = new
     return row
 
 
@@ -182,7 +132,7 @@ def format_duration_anime(row):
     new = 0
     if len(list_) > 1:
         for element in list_:
-            if i==0:
+            if i == 0:
                 new = int(element)*60
                 i = i + 1
             else:
@@ -191,16 +141,3 @@ def format_duration_anime(row):
         new = list_[0]
     row['Duration_format'] = new
     return row['Duration_format']
-
-
-
-
-
-
-
-    #print(row['Duration'])
-   # for element in list_:
-       # if 'hr' in element:
-
-
-    #print(list_)

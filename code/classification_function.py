@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 from sklearn import metrics
 from sklearn.ensemble import RandomForestClassifier
@@ -14,10 +16,11 @@ scoring = {'accuracy': make_scorer(accuracy_score),
 def KNNClassification(training, target):
     x_train, x_test, y_train, y_test = train_test_split(training, target, test_size=0.3, random_state=0)
     knn = KNeighborsClassifier(metric='manhattan', n_neighbors=13, weights='distance')
+    os.system("pause")
     knn.fit(x_train, y_train)
     y_pred = knn.predict(x_test)
     print("Accuracy knn:", metrics.accuracy_score(y_test, y_pred))
-    print(classification_report(y_test, y_pred))
+   # print(classification_report(y_test, y_pred))
 
     return knn
 
@@ -28,7 +31,7 @@ def GaussianNBClassification(training, target):
     gau.fit(x_train, y_train)
     y_pred_gau = gau.predict(x_test)
     print("Accuracy gau :", metrics.accuracy_score(y_test, y_pred_gau))
-    print(classification_report(y_test, y_pred_gau))
+   # print(classification_report(y_test, y_pred_gau))
 
 
 def RandomForestClassifierClassification(training, target):
@@ -37,7 +40,7 @@ def RandomForestClassifierClassification(training, target):
     rf.fit(x_train, y_train)
     y_pred_rf = rf.predict(x_test)
     print("Accuracy rf:", metrics.accuracy_score(y_test, y_pred_rf))
-    print(classification_report(y_test, y_pred_rf))
+  #  print(classification_report(y_test, y_pred_rf))
 
     return rf
 

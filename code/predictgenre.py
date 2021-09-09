@@ -5,8 +5,11 @@ import pandas as pd
 # import warnings filter
 from warnings import simplefilter
 # ignore all future warnings
+from preprocessing_function import genreDizionario
+
 simplefilter(action='ignore', category=FutureWarning)
-from classification_function import KNNClassification
+from classification_function import KNNClassification, RandomForestClassifierClassification
+
 name_dic = {}
 
 conversion_dic = {}
@@ -34,6 +37,7 @@ def set_rating():
 
 def search_format_name(element):
     if element in conversion_dic:
+        print(conversion_dic[element])
         return conversion_dic[element]
     else:
         i = 0
@@ -41,6 +45,10 @@ def search_format_name(element):
             i = i + 1
         conversion_dic[element] = i
         return conversion_dic[element]
+
+def search_format_genre(element):
+    if element in genreDizionario:
+        return genreDizionario[element]
 
 
 
@@ -72,8 +80,8 @@ def predict_genre(name, score, type_, episodes, duration, producers, studios, so
     studios_format = search_format_name(studios)
     source_format = search_format_name(source)
 
-    knn = KNNClassification(training, target)
-    genre_predict = knn.predict([[score, episodes, duration, producers_format, studios_format, name_format, type_format, source_format]])
+    rf = RandomForestClassifierClassification(training, target)
+    genre_predict = rf.predict([[score, episodes, duration, producers_format, studios_format, name_format, type_format, source_format]])
     final_val = [key for key, val in genre_dic.items() if val == genre_predict[0]]
     print(f"Il genere dell'anime {name} e': ", final_val[0])
 

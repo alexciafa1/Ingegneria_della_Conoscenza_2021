@@ -32,19 +32,16 @@ if risposta == '1':
     4 + 2^4 combinazioni =  16 = 20 casi possibili (12 casi possibili)
     genere
    '''
-    name = "Attack on Titan"
+    name = "Yakushiji Ryouko no Kaiki Jikenbo" #1
     type_ = "TV"
     duration = "23"
-    score = "8.51"
-    #producers = "Aniplex"
-    #studio = "Studio Pierrot"
-    rating = "PG-13"
-    source ="Manga"
-    episodes ="100"
-    genre ="Action"
+    score = "7.09"#2
+    source ="Novel"
+    episodes ="13"
+    genre ="Supernatural" #3
 
 
-    recommender = set_recommender(genre, name, duration, score, episodes, source)
+    recommender = set_recommender(episodes,genre, type_, source, duration, name, score)
 
 elif risposta == '2':
     print("ti chiedero' un po' di cose. inziamo...")

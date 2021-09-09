@@ -42,7 +42,7 @@ anime.to_csv("../dataset/anime_ridotto_2.csv", index=False)
 
 # array di conversione per categorici/numerici
 anime.apply(
-    lambda column: conversion_string(anime['Genre_format'], anime['Name'], anime['Type'], anime['Producers_format'],
+    lambda column: conversion_string(anime['Name'], anime['Type'], anime['Producers_format'],
                                      anime['Studios_format'], anime['Source'], anime['Rating_format']), axis=0)
 
 conversionDataset = pd.DataFrame()
@@ -57,7 +57,7 @@ conversionDataset.to_csv("../dataset/conversion_dic.csv", index=False)
 anime['Name_format'] = anime.apply(lambda row: convert_by_column(row, 'Name'), axis=1)
 
 # genre from categorical to numeric
-anime['Genre_format'] = anime.apply(lambda row: convert_by_column(row, 'Genre_format'), axis=1)
+anime['Genre_format'] = anime.apply(lambda row: convert_by_genre(row, 'Genre_format'), axis=1)
 
 # producers from categorical to numeric
 anime['Producers_format'] = anime.apply(lambda row: convert_by_column(row, 'Producers_format'), axis=1)

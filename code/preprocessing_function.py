@@ -4,14 +4,14 @@ dictionary_producers = {}
 dictionary_studios = {}
 dictionary_rating = {}
 
+genreDizionario = {'Comedy': 0, 'Parody': 1, 'Dementia': 2, 'Kids': 3, 'School': 4, 'Slice of Life': 5, 'Shoujo': 6, 'Romance': 7,
+         'Drama': 8, 'Music': 9, 'Fantasy': 10, 'Magic': 11, 'Supernatural': 12, 'Sci-Fi': 13, 'Mecha': 14,
+         'Game': 15, 'Sports': 16, 'Shounen': 17, 'Action': 18, 'Adventure': 19, 'Psychological': 20,
+         'Mystery': 21, 'Demons': 22, 'Horror': 23, 'Vampire': 24, 'Historical': 25, 'Seinen': 26, 'Ecchi': 27,
+         'Hentai': 28, 'Yaoi': 29}
 
-def conversion_string(columnGenre, columnName, columnType, columnProducers, columnStudios, columnSource, columnRating):
-    i = 0
-    for genre in columnGenre:
-        if genre not in conversionDic:
-            conversionDic[genre] = i
-            i = i + 1
-    conversionDic["fine_genre"] = -1
+
+def conversion_string(columnName, columnType, columnProducers, columnStudios, columnSource, columnRating):
     i = 0
     for type in columnType:
         if type not in conversionDic:
@@ -95,7 +95,13 @@ def convert_by_column(row, column_name):
 
     return row[column_name]
 
+# Metodo per trasformare i dati categorici in dati numerici
+def convert_by_genre(row, column_name):
+    if row[column_name] in genreDizionario:
+        element = row[column_name]
+        row[column_name] = genreDizionario[element]
 
+    return row[column_name]
 '''
 def clean_dataframe(anime):
     anime = anime[anime['Episodes'].apply(lambda x: x != 'Unknown')]
@@ -114,7 +120,7 @@ def clean_dataframe(anime):
 
 
 def clean_dataframe(anime):
-    # anime = anime[anime['Episodes'].apply(lambda x: x != 'Unknown')]
+    anime = anime[anime['Episodes'].apply(lambda x: x != 'Unknown')]
     anime = anime[anime['Studios'].apply(lambda x: x != 'Unknown')]
     # anime = anime[anime['Score'].apply(lambda x: x != 'Unknown')]
     # anime = anime[anime['Rating'].apply(lambda x: x != 'Unknown')]
@@ -124,7 +130,7 @@ def clean_dataframe(anime):
     # anime = anime[anime['Source'].apply(lambda x: x != 'Unknown')]
     anime.reset_index(drop=True)
 
-    anime["Episodes"] = anime["Episodes"].replace("Unknown", 50).astype(int)
+    anime["Genres"] = anime["Genres"].replace("Shounen Ai", 'Shounen')
     # anime["Studios"] = anime["Studios"].replace("Unknown", 5).astype(float)
     anime["Score"] = anime["Score"].replace("Unknown", 5).astype(float)
     anime["Rating"] = anime["Rating"].replace("Unknown", 'PG-13 - Teens 13 or older')
@@ -142,6 +148,7 @@ def clean_dataframe(anime):
 
     return anime
 
+
 def set_genre_anime(row, column_name):
     list = str(row[column_name]).split(', ')
     row[column_name] = list[0]
@@ -154,6 +161,7 @@ def round_rating(row):
     row['mean_rating'] = round(row['mean_rating'], 2)
     return row
 '''
+
 
 def format_duration_anime(row):
     list_ = str(row['Duration']).split(' ')
@@ -198,6 +206,7 @@ def episodes_duration(row, column):
         if element >= 40:
             row[column] = 2
         return row[column]
+
 
 def round_rating(row):
     row['Score'] = round(row['Score'])

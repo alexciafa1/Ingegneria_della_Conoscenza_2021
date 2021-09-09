@@ -7,30 +7,11 @@ from warnings import simplefilter
 # ignore all future warnings
 simplefilter(action='ignore', category=FutureWarning)
 from classification_function import KNNClassification
-name_dic = {}
+
 
 conversion_dic = {}
 genre_dic = {}
-def set_name():
-    i = 0
-    for key in conversion_dic:
-        if key!='fine_name' and i == 1:
-            name_dic[key] = conversion_dic[key]
 
-        elif key=='fine_name':
-            return
-        elif key=='fine_type':
-            i = 1
-def set_rating():
-    i = 0
-    for key in conversion_dic:
-        if key!='fine_name' and i == 1:
-            name_dic[key] = conversion_dic[key]
-
-        elif key=='fine_source':
-            return
-        elif key=='fine_rating':
-            i = 1
 
 def search_format_name(element):
     return conversion_dic[element]

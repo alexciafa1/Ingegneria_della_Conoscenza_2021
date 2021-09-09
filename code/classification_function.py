@@ -13,16 +13,16 @@ scoring = {'accuracy': make_scorer(accuracy_score),
 
 def KNNClassification(training, target):
     x_train, x_test, y_train, y_test = train_test_split(training, target, test_size=0.3, random_state=0)
-    knn = KNeighborsClassifier(metric='manhattan', n_neighbors=11, weights='distance')
+    knn = KNeighborsClassifier(metric='manhattan', n_neighbors=19, weights='uniform')
     knn.fit(x_train, y_train)
     y_pred = knn.predict(x_test)
-    print("Accuracy knn:", metrics.accuracy_score(y_test, y_pred))
+    # print("Accuracy knn:", metrics.accuracy_score(y_test, y_pred))
     return knn
 
 
 def GaussianNBClassification(training, target):
     x_train, x_test, y_train, y_test = train_test_split(training, target, test_size=0.3, random_state=0)
-    gau = GaussianNB(var_smoothing=0.66)
+    gau = GaussianNB()
     gau.fit(x_train, y_train)
     y_pred_gau = gau.predict(x_test)
     print("Accuracy gau :", metrics.accuracy_score(y_test, y_pred_gau))
@@ -30,7 +30,7 @@ def GaussianNBClassification(training, target):
 
 def RandomForestClassifierClassification(training, target):
     x_train, x_test, y_train, y_test = train_test_split(training, target, test_size=0.3, random_state=0)
-    rf = RandomForestClassifier(n_estimators=1350, criterion='entropy')
+    rf = RandomForestClassifier(n_estimators=1000, criterion='gini')
     rf.fit(x_train, y_train)
     y_pred_rf = rf.predict(x_test)
     print("Accuracy rf:", metrics.accuracy_score(y_test, y_pred_rf))

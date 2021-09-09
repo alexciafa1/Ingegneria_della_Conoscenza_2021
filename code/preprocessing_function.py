@@ -89,10 +89,6 @@ def set_columns_anime(row, dictionary, column_name):
     row[column_name] = final_genre
     return row[column_name]
 
-def set_genre_anime(row, column_name):
-    list_ = str(row[column_name]).split(', ')
-    row[column_name] = list_[0]
-    return row[column_name]
 
 # Metodo per trasformare i dati categorici in dati numerici
 def convert_by_column(row, column_name):

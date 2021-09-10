@@ -1,13 +1,14 @@
 import pandas as pd
 from warnings import simplefilter
-from preprocessing_function import genre_dictionary
-from classification_function import random_forest_classification
+from analysis.preprocessing_function import genre_dictionary
+from analysis.classification_function import random_forest_classification
 
 simplefilter(action='ignore', category=FutureWarning)
 
 name_dic = {}
 conversion_dic = {}
 genre_dic = {}
+
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # FUNZIONI DI PREDIZIONI DEL GENERE
@@ -26,7 +27,6 @@ def set_name():
 
 
 def set_rating():
-
     i = 0
 
     for key in conversion_dic:
@@ -55,14 +55,11 @@ def search_format_name(element):
 
 
 def search_format_genre(element):
-
     if element in genre_dictionary:
         return genre_dictionary[element]
 
 
-
 def set_genre():
-
     for key in conversion_dic:
         if key != 'fine_genre':
             genre_dic[key] = conversion_dic[key]
@@ -75,7 +72,6 @@ def set_dictionary(row):
 
 
 def predict_genre(name, score, type_, episodes, duration, producers, studios, source):
-
     anime = pd.read_csv('../dataset/anime_preprocessato.csv')
 
     conversion = pd.read_csv('../dataset/dizionario.csv')
@@ -106,6 +102,13 @@ def predict_genre(name, score, type_, episodes, duration, producers, studios, so
 
     print(f"Il genere dell'anime {name} e': ", final_val[0])
 
+
+def main(name, score, type_, episodes, duration, producers, studios, source):
+    predict_genre(name, score, type_, episodes, duration, producers, studios, source)
+
+
+if __name__ == '__main__':
+    main()
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # FINE FUNZIONI DI PREDIZIONI DEL GENERE
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

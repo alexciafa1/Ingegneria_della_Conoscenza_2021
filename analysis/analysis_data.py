@@ -1,6 +1,6 @@
 from sklearn import preprocessing
 from classification_function import *
-from analysys.preprocessing_function import *
+from analysis.preprocessing_function import *
 
 anime = pd.DataFrame()
 

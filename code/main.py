@@ -41,7 +41,6 @@ def main():
             string = input("Sai dirmi il tipo di questo anime? (Si o No)(se non sai cos'è il tipo digita 1)\n").lower()
 
             while string == '1':
-
                 print("Quando parliamo di tipo intendiamo se l'anime appartiene a una di queste categorie:\n" +
                       "- TV      : l'anime viene trasmesso ad episodi\n" +
                       "- Movie   : l'anime è un film\n" +
@@ -73,16 +72,16 @@ def main():
                 if string == "si":
                     duration = input("quanto dura mediamente? (esprimi la durata in minuti)\n").lower()
 
-            string = input("Sai dirmi l'origine di questo anime? (Si o No)(se non sai cos'è l'origine digita 1)\n").lower()
+            string = input(
+                "Sai dirmi l'origine di questo anime? (Si o No)(se non sai cos'è l'origine digita 1)\n").lower()
             while string == '1':
-
                 print("Quando parliamo di origine intendiamo se l'anime appartiene a una di queste categorie:\n" +
                       "- Manga\n- Novel\n- Book \n- Radio\n- Picture book\n- Web Manga\n- Digital Manga\n- Original\n")
 
-                string = input("Ora sai dirmi qual è l'origine? (Si o No)(se non sai cos'è l'origine digita 1)\n").lower()
+                string = input(
+                    "Ora sai dirmi qual è l'origine? (Si o No)(se non sai cos'è l'origine digita 1)\n").lower()
 
             if string == "si":
-
                 source = input("Qual è?\n").lower()
 
             recommender.main(episodes, genre, type_, source, duration, name, score)
@@ -90,7 +89,6 @@ def main():
             os.system("pause")
             bol = True
             print("\n")
-
 
         elif response == '2':
 
@@ -100,10 +98,10 @@ def main():
 
             score = input("Qual è lo score dell'anime che vuoi classificare?\n").lower()
 
-            type_ = input("Qual è il type dell'anime che vuoi classificare?(se non sai cos'è il tipo digita 1)\n").lower()
+            type_ = input(
+                "Qual è il type dell'anime che vuoi classificare?(se non sai cos'è il tipo digita 1)\n").lower()
 
             while type_ == '1':
-
                 print("Quando parliamo di tipo intendiamo se l'anime appartiene a una di queste categorie:\n" +
                       "- TV      : l'anime viene trasmesso ad episodi\n" +
                       "- Movie   : l'anime è un film\n" +
@@ -124,7 +122,6 @@ def main():
                            " (se non sai cos'è l'origine di un anime tipo digita 1)\n").lower()
 
             while source == '1':
-
                 print("Quando parliamo di origine intendiamo se l'anime appartiene a una di queste categorie:\n" +
                       "- Manga\n- Novel\n- Book \n- Radio\n- Picture book\n- Web Manga\n- Digital Manga\n- Original\n")
 

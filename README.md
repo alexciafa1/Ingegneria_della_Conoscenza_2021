@@ -6,8 +6,8 @@ Dataset utilizato: https://www.kaggle.com/CooperUnion/anime-recommendations-data
 
 # Progetto a cura di:
 
-Regina Grimaldi
+Regina Grimaldi mat. 676934
 
-Giuseppe Forziati
+Giuseppe Forziati mat. 675477
 
-Alessandro Ciafardini
+Alessandro Ciafardini mat. 650816
